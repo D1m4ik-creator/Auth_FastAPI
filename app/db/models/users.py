@@ -19,3 +19,6 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
+    
+    def __str__(self):
+        return self.name

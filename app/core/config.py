@@ -1,8 +1,12 @@
 from functools import lru_cache
+from pathlib import Path
 from urllib.parse import quote_plus
 
 from pydantic import BaseModel, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
 
 
 class DatabaseConfig(BaseModel):
@@ -28,21 +32,22 @@ class JWTConfig(BaseModel):
 
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(ROOT_DIR / ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
+        env_prefix="",
     )
 
-    postgres_user: str = Field(alias="POSTGRES_USER")
-    postgres_password: SecretStr = Field(alias="POSTGRES_PASSWORD")
-    postgres_db: str = Field(alias="POSTGRES_DB")
-    postgres_host: str = Field(alias="POSTGRES_HOST")
-    postgres_port: int = Field(alias="POSTGRES_PORT")
+    postgres_user: str = Field(env="POSTGRES_USER")
+    postgres_password: SecretStr = Field(env="POSTGRES_PASSWORD")
+    postgres_db: str = Field(env="POSTGRES_DB")
+    postgres_host: str = Field(env="POSTGRES_HOST")
+    postgres_port: int = Field(env="POSTGRES_PORT")
 
-    jwt_secret_key: SecretStr = Field(alias="JWT_SECRET_KEY")
-    jwt_refresh_secret_key: SecretStr = Field(alias="JWT_REFRESH_SECRET_KEY")
+    jwt_secret_key: SecretStr = Field(env="JWT_SECRET_KEY")
+    jwt_refresh_secret_key: SecretStr = Field(env="JWT_REFRESH_SECRET_KEY")
 
-    database_echo: bool = Field(default=False, alias="DATABASE_ECHO")
+    database_echo: bool = Field(default=False, env="DATABASE_ECHO")
 
     @property
     def database(self) -> DatabaseConfig:

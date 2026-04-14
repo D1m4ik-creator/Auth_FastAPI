@@ -1,10 +1,10 @@
 import uuid
-from enum import Enum
+from datetime import datetime
 
-from sqlalchemy import Column, String, DateTime, func
-from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -14,11 +14,8 @@ class Base(AsyncAttrs, DeclarativeBase):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String, nullable=False, unique=True)
-    email = Column(String, unique=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    created_at = Column(DateTime, nullable=False, server_default=func.now())
-    
-    def __str__(self):
-        return self.name
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name: Mapped[str] = mapped_column(unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False, index=True)
+    hashed_password: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(nullable=False, server_default=func.now())

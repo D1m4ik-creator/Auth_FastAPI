@@ -1,10 +1,9 @@
-from fastapi import status, HTTPException, APIRouter
-from app.db.schema.users import UserCreate, UserOut
+from fastapi import status, HTTPException, APIRouter, Response
+from app.db.schemas.users import UserCreate, UserOut
 from app.core.engine import SessionDep
 from app.core.security import create_access_token
 from app.core.config import get_settings
-from app.db.schema.users import UserLogin
-from fastapi import Response
+from app.db.schemas.users import UserLogin
 import app.crud.users as crud_user
 
 

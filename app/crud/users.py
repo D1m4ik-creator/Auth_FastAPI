@@ -1,8 +1,26 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from fastapi import status, HTTPException, Response, Depends
 from app.db.models.users import User
-from app.db.schema.users import UserCreate
-from app.core.security import get_password_hash, verify_password
+from app.db.schemas.users import UserCreate
+from app.core.security import get_password_hash, verify_password, decode_token, get_token, validate_token
+
+
+async def get_current_user(token: str = Depends(get_token)):
+    payload = decode_token(token)
+
+    if not validate_token(payload):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Токен не валидный!')
+
+    user_id = payload.get('sub')
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Не найден ID пользователя')
+
+    user = await UsersDAO.find_one_or_none_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
+
+    return user
 
 
 async def get_by_email(db: AsyncSession, email: str):

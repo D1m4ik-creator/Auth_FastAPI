@@ -8,10 +8,10 @@ from fastapi import Response
 import app.crud.users as crud_user
 
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/auth", tags=["users"])
 
 
-@router.post("/", response_model=UserOut)
+@router.post("/create_user/", response_model=UserOut)
 async def create_user(user_in: UserCreate, db: SessionDep):
     user = await crud_user.get_by_email(db, email=user_in.email)
     if user:
@@ -19,7 +19,7 @@ async def create_user(user_in: UserCreate, db: SessionDep):
     
     return await crud_user.create(db, obj_in=user_in)
 
-@router.post("/login/")
+@router.post("/login_user/")
 async def auth_user(db: SessionDep, user_data: UserLogin, response: Response):
     user = await crud_user.authenticate_user(db, email=user_data.email, password=user_data.password)
     if not user:

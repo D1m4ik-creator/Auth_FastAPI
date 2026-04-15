@@ -1,6 +1,6 @@
 import uuid
 import re
-
+from datetime import datetime
 from pydantic import BaseModel, EmailStr, field_validator
 
 
@@ -20,18 +20,23 @@ class UserCreate(BaseModel):
             raise ValueError("Пароль должен быть от 8 до 64 символов и содержать хотя бы одну заглавную букву, одну строчную букву, одну цифру и один специальный символ.")
         return value
     
+
 class UserOut(BaseModel):
     id: uuid.UUID
     email: EmailStr
+
+
+class User(BaseModel):
+    name: str
+    email: EmailStr
+    created_at: datetime
 
     class Config:
         from_attributes = True
 
 
-class User(BaseModel):
-    id: uuid.UUID
-    name: str
-    email: EmailStr
+class Token(BaseModel):
+    token: str
 
 
 class UserLogin(BaseModel):

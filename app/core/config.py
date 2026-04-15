@@ -46,6 +46,8 @@ class Config(BaseSettings):
 
     jwt_secret_key: SecretStr = Field(env="JWT_SECRET_KEY")
     jwt_refresh_secret_key: SecretStr = Field(env="JWT_REFRESH_SECRET_KEY")
+    jwt_algorithm: str = Field(validation_alias="ALGORITHM")
+    jwt_access_token_expire_minutes: int = Field(validation_alias="ACCESS_TOKEN_EXPIRE_MINUTES")
 
     database_echo: bool = Field(default=False, env="DATABASE_ECHO")
 
@@ -65,6 +67,8 @@ class Config(BaseSettings):
         return JWTConfig(
             secret_key=self.jwt_secret_key,
             refresh_secret_key=self.jwt_refresh_secret_key,
+            algorithm=self.jwt_algorithm,
+            access_token_expire_minutes=self.jwt_access_token_expire_minutes,
         )
 
 

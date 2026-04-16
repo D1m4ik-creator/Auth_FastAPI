@@ -70,14 +70,6 @@ def refresh_decode_token(token: str) -> dict:
             detail="Refresh token не валидный",
         )
 
-def validate_token(payload: dict) -> bool:
-    """Валидирует токен по полю exp, возвращает True если токен валидный, иначе False"""
-    expire = payload.get('exp')
-    expire_time = datetime.fromtimestamp(int(expire), tz=timezone.utc)
-    if (not expire) or (expire_time < datetime.now(timezone.utc)):
-        return False
-    return True
-
 
 def get_token(request: Request):
     """Получает токен из cookie с ключом 'users_access_token', если токен не найден, то вызывает HTTPException с кодом 401"""

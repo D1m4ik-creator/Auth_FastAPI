@@ -48,6 +48,7 @@ class Config(BaseSettings):
     jwt_refresh_secret_key: SecretStr = Field(env="JWT_REFRESH_SECRET_KEY")
     jwt_algorithm: str = Field(validation_alias="ALGORITHM")
     jwt_access_token_expire_minutes: int = Field(validation_alias="ACCESS_TOKEN_EXPIRE_MINUTES")
+    jwt_refresh_token_expire_days: int = Field(validation_alias="REFRESH_TOKEN_EXPIRE_DAYS")
 
     database_echo: bool = Field(default=False, env="DATABASE_ECHO")
 
@@ -69,6 +70,7 @@ class Config(BaseSettings):
             refresh_secret_key=self.jwt_refresh_secret_key,
             algorithm=self.jwt_algorithm,
             access_token_expire_minutes=self.jwt_access_token_expire_minutes,
+            refresh_token_expire_days=self.jwt_refresh_token_expire_days,
         )
 
 

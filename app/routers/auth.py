@@ -28,7 +28,7 @@ async def auth_user(db: SessionDep, user_data: UserLogin, response: Response):
                             detail='Неверная почта или пароль')
     access_token_lifetime_seconds = get_settings().jwt.access_token_expire_minutes * 60
     access_token = create_access_token({"sub": str(user.id)})
-    refresh_token_lifetime_days = get_settings().refresh_token_expire_days
+    refresh_token_lifetime_days = get_settings().jwt.refresh_token_expire_days * 60 * 60 * 24
     refresh_token = create_refresh_token({"sub": str(user.id)})
     await UsersDAO.update_refresh_token(db, user_id=user.id, refresh_token=refresh_token)
 
@@ -54,11 +54,12 @@ async def auth_user(db: SessionDep, user_data: UserLogin, response: Response):
 @router.post("/logout/")
 async def logout_user(response: Response):
     response.delete_cookie(key="users_access_token")
+    response.delete_cookie(key="users_refresh_token")
     return {'message': 'Пользователь успешно вышел из системы'}
 
 
 @router.post("/refresh/")
-async def refresh(db: SessionDep, request: Request, response: Response, user_data: Token):
+async def refresh(db: SessionDep, request: Request, response: Response):
     old_refresh = request.cookies.get("users_refresh_token")
     user_id = refresh_decode_token(old_refresh).get("sub")
 

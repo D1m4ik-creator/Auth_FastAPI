@@ -7,6 +7,15 @@ from pydantic import BaseModel, EmailStr, field_validator
 PASSWORD_RE = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$")
 
 
+class User(BaseModel):
+    name: str
+    email: EmailStr
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
 class UserCreate(BaseModel):
     name: str
     email: EmailStr
@@ -21,24 +30,15 @@ class UserCreate(BaseModel):
         return value
     
 
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
 class UserOut(BaseModel):
     id: uuid.UUID
     email: EmailStr
 
 
-class User(BaseModel):
-    name: str
-    email: EmailStr
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
 class Token(BaseModel):
     token: str
-
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
